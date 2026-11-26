@@ -1,4 +1,5 @@
 ---
+import "@fontsource-variable/inter/wght.css";
 import {categories,normalize} from '../lib/fantrax';
 import {standings} from '../lib/rankings';
 const raw=import.meta.glob('../../data/2026-27/raw/week-*.json',{eager:true,query:'?raw',import:'default'});
@@ -8,7 +9,7 @@ const data=[standings(weeks),...weeks.map(w=>standings([w]))];
 ---
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Transatlantic Ballers · League rankings</title><link rel="stylesheet" href="/league.css"/></head>
 <body><main><header><span>League analytics</span><span>2026–27 season</span></header>
-<h1>Transatlantic <i>Ballers</i></h1>
+<h1>Transatlantic Ballers</h1>
 <nav><a href="#power">Power rankings</a><a href="#motion">Season in motion</a><a href="https://www.fantrax.com/fantasy/league/jdc94v3kmtvppxcs">Fantrax ↗</a></nav>
 <section id="power"><h2>Power rankings</h2><div class="controls"><select id="period" aria-label="Scoring period"><option value="0">Season to date</option>{[...weeks].reverse().map(w=><option value={w.period}>Week {w.period} · {w.period===latest?'In progress':'Final'}</option>)}</select><div><button id="rank" aria-pressed="true">Ranks</button><button id="production" aria-pressed="false">Per game</button></div></div>
 <p id="note">Season shooting totals are awaiting verification. Overall ranks and roto scores are available for individual weeks.</p>
