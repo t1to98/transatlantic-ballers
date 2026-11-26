@@ -1,0 +1,36 @@
+name: Backfill Fantrax
+on: [push, workflow_dispatch]
+permissions:
+  contents: write
+concurrency: fantrax-ingestion
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Fetch and validate historical weeks
+        run: |
+          node --input-type=module <<'JS'
+          import { request, normalize } from './src/lib/fantrax.ts';
+          import { mkdir, writeFile } from 'node:fs/promises';
+          const current = await request('getMatchupScores');
+          const latest = normalize(current);
+          const ids = latest.teams.map(t => t.teamId).sort().join(',');
+          const dir = 'data/2026-27/raw';
+          await mkdir(dir, { recursive: true });
+          for (let p = 1; p <= latest.period; p++) {
+            const raw = p === latest.period ? current : await request('getMatchupScores', p);
+            const week = normalize(raw, p);
+            if (week.teams.map(t => t.teamId).sort().join(',') !== ids) throw Error('Team IDs changed');
+            await writeFile(dir + '/week-' + p + '.json', raw);
+          }
+          JS
+      - name: Commit complete backfill
+        run: |
+          git add data/2026-27/raw
+          git diff --cached --quiet && exit 0
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Refresh validated Fantrax snapshots'
+          git push
