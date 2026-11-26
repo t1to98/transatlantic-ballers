@@ -1,5 +1,9 @@
 name: Backfill Fantrax
-on: [push, workflow_dispatch]
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 * * 10-12 *'
+    - cron: '17 * * 1-3 *'
 permissions:
   contents: write
 concurrency: fantrax-ingestion
@@ -12,22 +16,9 @@ jobs:
         with:
           node-version: '24'
       - name: Fetch and validate historical weeks
-        run: |
-          node --input-type=module <<'JS'
-          import { request, normalize } from './src/lib/fantrax.ts';
-          import { mkdir, writeFile } from 'node:fs/promises';
-          const current = await request('getMatchupScores');
-          const latest = normalize(current);
-          const ids = latest.teams.map(t => t.teamId).sort().join(',');
-          const dir = 'data/2026-27/raw';
-          await mkdir(dir, { recursive: true });
-          for (let p = 1; p <= latest.period; p++) {
-            const raw = p === latest.period ? current : await request('getMatchupScores', p);
-            const week = normalize(raw, p);
-            if (week.teams.map(t => t.teamId).sort().join(',') !== ids) throw Error('Team IDs changed');
-            await writeFile(dir + '/week-' + p + '.json', raw);
-          }
-          JS
+        env:
+          FULL_BACKFILL: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+        run: node scripts/refresh.ts
       - name: Commit complete backfill
         run: |
           git add data/2026-27/raw
