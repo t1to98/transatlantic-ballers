@@ -16,3 +16,8 @@
   gap: 8px 16px;
   margin-bottom: 12px;
 }
+#chart [data-team] { cursor: pointer; }
+#chart .muted { opacity: .13; }
+#chart .highlighted .trajectory { stroke-width: 3.5; }
+#chart .highlighted text { font-weight: 700; }
+#chart .highlighted circle { r: 4.5px; }
