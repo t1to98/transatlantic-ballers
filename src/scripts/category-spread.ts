@@ -5,8 +5,8 @@ import type { TeamRow } from './league-data';
 type Mark = { team: string; name: string; value: number; button: HTMLButtonElement };
 const root = document.querySelector<HTMLElement>('#distributions')!;
 const tip = document.querySelector<HTMLElement>('#spread-tip')!;
-const rows = Array.from(root.querySelectorAll<HTMLElement>('.spread-row'), (element, index) => ({
-  element, category: categories[index],
+const rows = Array.from(root.querySelectorAll<HTMLElement>('.spread-row'), element => ({
+  element, category: element.dataset.category!,
   track: element.querySelector<HTMLElement>('.spread-track')!,
   range: element.querySelector<HTMLElement>('.spread-range')!,
   middle: element.querySelector<HTMLElement>('.spread-middle')!,
@@ -16,8 +16,9 @@ const rows = Array.from(root.querySelectorAll<HTMLElement>('.spread-row'), (elem
 let pinned: string | null = null;
 let inspected: HTMLButtonElement | null = null;
 
-function formatted(value: number, percent: boolean) {
-  return percent ? (value * 100).toFixed(2) + '%' : value.toFixed(2);
+function formatted(value: number, category: string) {
+  if (category === 'GP') return String(value);
+  return category.endsWith('%') ? (value * 100).toFixed(2) + '%' : value.toFixed(2);
 }
 
 function layout() {
@@ -76,21 +77,24 @@ function inspect(button: HTMLButtonElement) {
 
 export function renderSpread(teams: TeamRow[]) {
   dismiss();
-  rows.forEach((row, i) => {
+  rows.forEach(row => {
     const { element, track, range, middle, category } = row;
     row.marks.forEach(mark => mark.button.remove());
     row.marks = [];
+    const gamesPlayed = category === 'GP';
+    const categoryIndex = categories.findIndex(name => name === category);
     const sorted = teams.flatMap(team => {
-      const value = team.values[i];
+      const value = gamesPlayed ? team.gp : team.values[categoryIndex];
       return value === null ? [] : [{ team: team.id, name: team.name, value }];
     }).sort((a, b) => a.value - b.value || a.team.localeCompare(b.team));
     const stats = row.stats = quartiles(sorted.map(mark => mark.value));
     element.classList.toggle('empty', !stats);
     const percent = category.endsWith('%');
-    middle.textContent = stats ? formatted(stats.median, percent) : '—';
-    range.firstElementChild!.textContent = stats ? formatted(stats.low, percent) : 'No data';
-    range.lastElementChild!.textContent = stats ? formatted(stats.high, percent) : '';
+    middle.textContent = stats ? formatted(stats.median, category) : '—';
+    range.firstElementChild!.textContent = stats ? formatted(stats.low, category) : 'No data';
+    range.lastElementChild!.textContent = stats ? formatted(stats.high, category) : '';
     if (!stats) return;
+    const unit = gamesPlayed ? 'games played' : percent ? category : category + ' per player-game';
     const fragment = document.createDocumentFragment();
     row.marks = sorted.map((item, index) => {
       const button = document.createElement('button');
@@ -99,9 +103,9 @@ export function renderSpread(teams: TeamRow[]) {
       button.dataset.team = item.team;
       button.dataset.name = item.name;
       const diff = (item.value - stats.median) * (percent ? 100 : 1);
-      const gap = Math.abs(diff) < .005 ? '<0.01' : Math.abs(diff).toFixed(2);
+      const gap = gamesPlayed ? String(Math.abs(diff)) : Math.abs(diff) < .005 ? '<0.01' : Math.abs(diff).toFixed(2);
       const delta = diff === 0 ? 'At the median' : gap + (percent ? ' pp' : '') + (diff > 0 ? ' above median' : ' below median');
-      const detail = formatted(item.value, percent) + ' ' + category + (percent ? '' : ' per player-game') + ' · ' + delta;
+      const detail = formatted(item.value, category) + ' ' + unit + ' · ' + delta;
       button.dataset.detail = detail;
       button.setAttribute('aria-label', item.name + ', ' + detail);
       button.tabIndex = index === Math.floor((sorted.length - 1) / 2) ? 0 : -1;

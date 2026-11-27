@@ -46,8 +46,8 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
   <p id="spread-note" hidden>{season.note}</p>
   <div class="spread-head" aria-hidden="true"><span>Category</span><span>Low to high</span><span>Median</span></div>
   <div id="distributions">
-    {categories.map(category => <div class="spread-row" role="group" aria-label={category}>
-      <strong class="spread-category">{category}</strong>
+    {[...categories, 'GP'].map(category => <div class="spread-row" data-category={category} role="group" aria-label={category === 'GP' ? 'Games played (GP)' : category}>
+      <strong class="spread-category" title={category === 'GP' ? 'Games played' : undefined}>{category}</strong>
       <div class="spread-plot">
         <div class="spread-track"><div class="spread-axis"></div><div class="spread-band"></div><div class="spread-median"></div></div>
         <div class="spread-range"><span></span><span></span></div>
