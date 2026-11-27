@@ -1,9 +1,11 @@
 export const categories = ['FG%', '3PM', 'FT%', 'PTS', 'REB', 'AST', 'STL', 'BLK'] as const;
+const leagueId = 'jdc94v3kmtvppxcs';
+export const rosterBase = `https://www.fantrax.com/fantasy/league/${leagueId}/team/roster`;
 const aliases: Record<string,string> = { '3PTM': '3PM', ST: 'STL' };
 
 export async function request(endpoint: 'getLeagueInfo' | 'getMatchupScores', period?: number) {
   const url = new URL(endpoint, 'https://www.fantrax.com/fxea/general/');
-  url.searchParams.set('leagueId', 'jdc94v3kmtvppxcs');
+  url.searchParams.set('leagueId', leagueId);
   if (period !== undefined) url.searchParams.set('period', String(period));
   const response = await fetch(url, {
     headers: { Accept: 'application/json', 'User-Agent': 'TransatlanticBallers/1.0' },

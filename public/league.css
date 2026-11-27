@@ -84,21 +84,13 @@ th[aria-sort="descending"] button::after {
   #pills button { font-size: 12px; padding: 7px 5px; }
 }
 
-.nav-inner a { position: relative; color: #bcbcbc; font-size: 14px; }
+.nav-inner a { color: #bcbcbc; font-size: 14px; }
 .nav-inner a:hover, .nav-inner a:focus-visible, .nav-inner a[aria-current] {
   color: white;
   text-decoration: none;
 }
-.nav-inner a[aria-current]::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 6px;
-  height: 2px;
-  background: currentColor;
-}
-.nav-inner .league-mark {
+.nav-inner .season-link {
   margin-right: auto;
-  min-width: 44px;
 }
 .league-crest {
   display: block;
