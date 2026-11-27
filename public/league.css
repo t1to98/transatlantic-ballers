@@ -47,3 +47,12 @@ th[aria-sort="descending"] button::after {
   border-bottom: 0;
   border-top: 4px solid currentColor;
 }
+
+#power table tr > :first-child {
+  width: 1%;
+  padding-inline: 3px;
+  white-space: nowrap;
+}
+#power th:first-child button {
+  padding-inline: 0;
+}
