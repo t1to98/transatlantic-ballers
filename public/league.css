@@ -23,7 +23,7 @@
   right: 4px;
   width: 4px;
   height: 4px;
-  border: solid #838383;
+  border: solid var(--picker-caret, #838383);
   border-width: 0 1px 1px 0;
   transform: translateY(-1px) rotate(45deg);
   pointer-events: none;
@@ -41,9 +41,14 @@
   border: 0;
   font-weight: inherit;
 }
-.period-field:has(select:focus-visible) { outline: 2px solid currentColor; outline-offset: 1px; }
+.period-field:has(select:focus-visible:not([data-pointer-focus]))::after {
+  border-color: currentColor;
+  border-width: 0 2px 2px 0;
+  width: 6px;
+  height: 6px;
+}
 .week-step {
-  color: #707070;
+  color: var(--picker-arrow, #707070);
   display: inline-grid;
   place-items: center;
   width: 30px;
@@ -62,7 +67,7 @@
   transform: rotate(45deg);
 }
 .week-step[data-step="-1"] span::before { transform: rotate(-135deg); }
-.week-step:disabled { color: #c8c8c8; cursor: default; }
+.week-step:disabled { color: var(--picker-disabled, #c8c8c8); cursor: default; }
 .controls {
   flex-wrap: wrap;
   gap: 8px 16px;
@@ -73,8 +78,8 @@
   .segments button[aria-pressed="false"]:hover {
     background-color: #f2f2f2;
   }
-  .week-step:enabled:hover { color: #424242; }
-  .period-field:hover::after { border-color: #424242; }
+  .week-step:enabled:hover { color: var(--picker-hover, #424242); }
+  .period-field:hover::after { border-color: var(--picker-hover, #424242); }
   .period-picker .season-shortcut:hover { color: var(--ink); }
   th [data-sort]:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
@@ -140,6 +145,7 @@ th[aria-sort="descending"] button::after {
 
 .nav-inner {
   display: flex;
+  align-items: center;
   gap: 24px;
   width: 100%;
   max-width: 1220px;
@@ -171,8 +177,31 @@ th[aria-sort="descending"] button::after {
   color: white;
   text-decoration: none;
 }
-.nav-inner .season-link {
-  margin-right: auto;
+.nav-sections {
+  display: flex;
+  gap: inherit;
+  margin-inline-start: auto;
+}
+.nav-inner .period-picker {
+  color: #e1e1e1;
+  font-size: 14px;
+  --picker-caret: #aaa;
+  --picker-arrow: #bcbcbc;
+  --picker-hover: #fff;
+  --picker-disabled: #606060;
+}
+.nav-inner .period-field select { color-scheme: dark; }
+.nav-inner .season-link { white-space: nowrap; }
+@media (max-width: 500px) {
+  nav .nav-inner { flex-wrap: wrap; gap: 0 6px; }
+  .nav-inner .season-link { height: 38px; font-size: 13px; }
+  .nav-inner .period-picker { font-size: 13px; }
+  .nav-inner .week-step { width: 24px; }
+  .nav-inner .period-field select, .nav-inner .period-label { padding-inline: 12px; }
+  .nav-sections { flex-basis: 100%; gap: 18px; }
+  .nav-sections a { height: 29px; }
+  body { padding-top: 67px; }
+  html { scroll-padding-top: 79px; }
 }
 .league-crest {
   display: block;
@@ -241,5 +270,5 @@ th[aria-sort="descending"] button::after {
   .spread-head, .spread-row { grid-template-columns: 3.2rem minmax(0, 1fr) 3.6rem; column-gap: 8px; }
   .spread-row { font-size: 13px; }
   .spread-key { gap: 8px; font-size: 11px; }
-  .nav-inner { gap: 18px; }
+  .nav-inner { column-gap: 18px; }
 }

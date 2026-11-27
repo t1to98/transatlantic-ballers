@@ -17,7 +17,10 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <body id="top">
 <nav aria-label="Rankings"><div class="nav-inner">
   <a class="season-link" href="#top">2026-27 Season</a>
-  <a href="#power" aria-current="location">Power</a><a href="#spread">Spread</a><a href="#motion">Weekly</a>
+  <PeriodPicker id="nav-period" periods={periods} label="Navigation scoring period" showSeasonShortcut={false} />
+  <div class="nav-sections">
+    <a href="#power" aria-current="location">Power</a><a href="#spread">Spread</a><a href="#motion">Weekly</a>
+  </div>
 </div></nav>
 <main>
 <h1 class="league-title">

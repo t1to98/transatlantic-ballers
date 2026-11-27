@@ -1,6 +1,6 @@
 ---
-interface Props { id: string; periods: number[]; label: string }
-const { id, periods, label } = Astro.props;
+interface Props { id: string; periods: number[]; label: string; showSeasonShortcut?: boolean }
+const { id, periods, label, showSeasonShortcut = true } = Astro.props;
 const latest = periods.at(-1);
 const weekLabel = (week: number) => week === latest ? `Week ${week} • Current` : `Week ${week}`;
 ---
@@ -18,5 +18,5 @@ const weekLabel = (week: number) => week === latest ? `Week ${week} • Current`
   <button type="button" class="week-step" data-step="1" aria-label="Go to season to date">
     <span aria-hidden="true">›</span>
   </button>
-  <button type="button" class="season-shortcut">Season to date</button>
+  {showSeasonShortcut && <button type="button" class="season-shortcut">Season to date</button>}
 </div>

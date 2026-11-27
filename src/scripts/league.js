@@ -56,7 +56,8 @@ function showPeriod(week) {
   currentPeriod = week;
   if (week !== 0) lastWeek = week;
   for (const picker of pickers) {
-    picker.querySelector('.season-shortcut').textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
+    const shortcut = picker.querySelector('.season-shortcut');
+    if (shortcut) shortcut.textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
     const select = picker.querySelector('select');
     select.value = String(week);
     picker.querySelector('.period-label').textContent = select.selectedOptions[0].text;
@@ -75,8 +76,14 @@ function showPeriod(week) {
   renderSpread(rowsByPeriod.get(week));
 }
 for (const picker of pickers) {
-  picker.querySelector('.season-shortcut').addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
-  picker.querySelector('select').addEventListener('change', event => showPeriod(Number(event.target.value)));
+  picker.querySelector('.season-shortcut')?.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
+  const select = picker.querySelector('select');
+  select.addEventListener('change', () => showPeriod(Number(select.value)));
+  // Native selects can retain :focus-visible after a mouse or touch selection.
+  select.addEventListener('pointerdown', () => select.setAttribute('data-pointer-focus', ''));
+  const clearPointerFocus = () => select.removeAttribute('data-pointer-focus');
+  select.addEventListener('keydown', clearPointerFocus);
+  select.addEventListener('blur', clearPointerFocus);
   for (const button of picker.querySelectorAll('[data-step]'))
     button.addEventListener('click', () => showPeriod(stepTo(Number(button.dataset.step))));
 }
