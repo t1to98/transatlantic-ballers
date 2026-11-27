@@ -5,7 +5,8 @@ import { showChartPeriod } from './weekly-chart';
 function rosterUrl(teamId){
   return rosterBase+';teamId='+encodeURIComponent(teamId);
 }
-let currentPeriod=periodNumbers.at(-1);
+const latestWeek = periodNumbers.at(-1);
+let currentPeriod = latestWeek ?? 0;
 let bestFirst=true;
 let sort=-1, production=false;
 function renderTable(){
@@ -47,6 +48,8 @@ function renderTable(){
   for(const id of ['rank','production'])document.getElementById(id).setAttribute('aria-pressed',String((id==='production')===production));
 }
 const pickers = document.querySelectorAll('.period-picker');
+const dialog = document.getElementById('period-dialog');
+const options = [...dialog.querySelectorAll('[data-period]')];
 const periodOrder = [...periodNumbers, 0];
 let lastWeek = currentPeriod;
 function stepTo(direction) {
@@ -56,12 +59,17 @@ function showPeriod(week) {
   if (!rowsByPeriod.has(week)) return;
   currentPeriod = week;
   if (week !== 0) lastWeek = week;
+  const label = week === 0 ? 'Season to date' : 'Week ' + week + (week === latestWeek ? ' • Current' : '');
+  for (const option of options) option.setAttribute('aria-pressed', String(Number(option.dataset.period) === week));
   for (const picker of pickers) {
-    const shortcut = picker.querySelector('.season-shortcut');
-    if (shortcut) shortcut.textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
-    const select = picker.querySelector('select');
-    select.value = String(week);
-    picker.querySelector('.period-label').textContent = select.selectedOptions[0].text;
+    picker.querySelector('.period-label').textContent = label;
+    const shortcut = picker.querySelector('[data-toggle-season]');
+    if (shortcut) {
+      shortcut.hidden = latestWeek === undefined;
+      shortcut.textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
+    }
+    const returnButton = picker.querySelector('[data-return-current]');
+    if (returnButton) returnButton.hidden = latestWeek === undefined || week === latestWeek;
     for (const button of picker.querySelectorAll('[data-step]')) {
       const direction = Number(button.dataset.step);
       const next = stepTo(direction);
@@ -78,17 +86,34 @@ function showPeriod(week) {
   showChartPeriod(week);
 }
 for (const picker of pickers) {
-  picker.querySelector('.season-shortcut')?.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
-  const select = picker.querySelector('select');
-  select.addEventListener('change', () => showPeriod(Number(select.value)));
-  // Native selects can retain :focus-visible after a mouse or touch selection.
-  select.addEventListener('pointerdown', () => select.setAttribute('data-pointer-focus', ''));
-  const clearPointerFocus = () => select.removeAttribute('data-pointer-focus');
-  select.addEventListener('keydown', clearPointerFocus);
-  select.addEventListener('blur', clearPointerFocus);
+  const trigger = picker.querySelector('.period-field');
+  trigger.addEventListener('click', () => {
+    trigger.focus({ preventScroll: true });
+    trigger.setAttribute('aria-expanded', 'true');
+    dialog.showModal();
+    dialog.querySelector('[aria-pressed="true"]').focus();
+  });
+  picker.querySelector('[data-toggle-season]')?.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
+  picker.querySelector('[data-return-current]')?.addEventListener('click', () => {
+    showPeriod(latestWeek);
+    trigger.focus({ preventScroll: true });
+  });
   for (const button of picker.querySelectorAll('[data-step]'))
     button.addEventListener('click', () => showPeriod(stepTo(Number(button.dataset.step))));
 }
+for (const option of options) {
+  option.addEventListener('click', () => {
+    showPeriod(Number(option.dataset.period));
+    dialog.close();
+  });
+}
+dialog.querySelector('.close-period').addEventListener('click', () => dialog.close());
+dialog.addEventListener('click', event => {
+  if (event.target === dialog) dialog.close();
+});
+dialog.addEventListener('close', () => {
+  for (const trigger of document.querySelectorAll('.period-field')) trigger.setAttribute('aria-expanded', 'false');
+});
 document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const next=Number(b.dataset.sort);bestFirst=next===sort?!bestFirst:true;sort=next;renderTable()});
 for(const id of ['rank','production'])document.getElementById(id).onclick=()=>{production=id==='production';renderTable()};
 showPeriod(currentPeriod);

@@ -12,9 +12,10 @@
 }
 .period-field {
   position: relative;
-  display: inline-grid;
-  align-items: center;
-  min-height: 34px;
+  border: 0;
+  padding: 4px 17px;
+  min-height: 36px;
+  min-width: 14ch;
   font-weight: 550;
 }
 .period-field::after {
@@ -28,24 +29,10 @@
   transform: translateY(-1px) rotate(45deg);
   pointer-events: none;
 }
-.period-field select, .period-label {
-  grid-area: 1 / 1;
-  padding: 4px 16px;
-}
-.period-label { text-align: center; white-space: nowrap; }
-.period-field select {
-  appearance: none;
-  opacity: 0;
-  height: 100%;
-  width: 100%;
-  border: 0;
-  font-weight: inherit;
-}
-.period-field:has(select:focus-visible:not([data-pointer-focus]))::after {
-  border-color: currentColor;
-  border-width: 0 2px 2px 0;
-  width: 6px;
-  height: 6px;
+.period-label { white-space: nowrap; }
+.period-field:focus-visible, .week-step:focus-visible, .season-shortcut:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: -2px;
 }
 .week-step {
   color: var(--picker-arrow, #707070);
@@ -80,7 +67,7 @@
   }
   .week-step:enabled:hover { color: var(--picker-hover, #424242); }
   .period-field:hover::after { border-color: var(--picker-hover, #424242); }
-  .period-picker .season-shortcut:hover { color: var(--ink); }
+  .period-picker .season-shortcut:hover { color: var(--picker-hover, var(--ink)); }
   th [data-sort]:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 #chart [data-team] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
@@ -102,7 +89,7 @@
 }
 .chart-tip strong { display: block; font-size: 13px; }
 .chart-tip div:first-of-type { color: #666; }
-#spread > p, #motion > p, footer p { color: #767676; }
+#spread > p, footer p { color: #767676; }
 #chart .muted { opacity: .13; }
 #chart .highlighted .trajectory { stroke-width: 3.5; }
 #chart .highlighted text { font-weight: 700; }
@@ -154,9 +141,15 @@ th[aria-sort="descending"] button::after {
 }
 .nav-inner a { display: flex; align-items: center; height: 44px; font-weight: 550; }
 
-#motion h2 { margin-bottom: 12px; }
-.chart-controls { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
-.chart-controls > .segments { flex: none; }
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.section-heading h2 { margin: 0; }
+.section-heading > :last-child { flex: none; }
 #chart .selected-week { fill: var(--ink); font-weight: 700; }
 .segments {
   display: flex;
@@ -173,20 +166,9 @@ th[aria-sort="descending"] button::after {
   .nav-inner { padding-inline: 12px; }
 
   .segments button { font-size: 12px; padding: 7px 5px; }
-  .chart-controls .period-picker { font-size: 13px; }
-  .chart-controls .week-step { width: 24px; }
-  .chart-controls .period-label { padding-inline: 12px; }
-  .chart-controls select { position: absolute; inset: 0; }
-  .chart-controls .season-shortcut { margin-inline-start: 4px; }
 }
 @media (max-width: 360px) {
-  .chart-controls { margin-inline: -4px; gap: 2px; }
-  .chart-controls .period-picker { font-size: 12px; gap: 0; }
-  .chart-controls .period-label { padding-inline: 9px; }
-  .chart-controls .period-field::after { right: 1px; }
-  .chart-controls .week-step { width: 20px; }
-  .chart-controls .season-shortcut { margin-inline-start: 0; }
-  .chart-controls .segments button { padding-inline: 3px; }
+  .section-heading h2 { font-size: 24px; }
 }
 
 .nav-inner a { color: #bcbcbc; font-size: 14px; }
@@ -207,18 +189,16 @@ th[aria-sort="descending"] button::after {
   --picker-hover: #fff;
   --picker-disabled: #606060;
 }
-.nav-inner .period-field select { color-scheme: dark; }
-.nav-inner .season-link { white-space: nowrap; }
+.nav-inner .season-shortcut { color: #bcbcbc; }
 @media (max-width: 500px) {
   nav .nav-inner { flex-wrap: wrap; gap: 0 6px; }
-  .nav-inner .season-link { height: 38px; font-size: 13px; }
-  .nav-inner .period-picker { font-size: 13px; }
-  .nav-inner .week-step { width: 24px; }
-  .nav-inner .period-field select, .nav-inner .period-label { padding-inline: 12px; }
+  .nav-inner .period-picker { font-size: 13px; min-height: 44px; }
+  .nav-inner .week-step { width: 36px; height: 44px; }
+  .nav-inner .period-field, .nav-inner .season-shortcut { min-height: 44px; }
   .nav-sections { flex-basis: 100%; gap: 18px; }
   .nav-sections a { height: 29px; }
-  body { padding-top: 67px; }
-  html { scroll-padding-top: 79px; }
+  body { padding-top: 73px; }
+  html { scroll-padding-top: 85px; }
 }
 .league-crest {
   display: block;
@@ -239,9 +219,7 @@ th[aria-sort="descending"] button::after {
   .league-title { font-size: clamp(30px, 8vw, 36px); }
 }
 
-#spread h2 { margin-bottom: 12px; }
-.spread-controls, .spread-key, .spread-key span { display: flex; align-items: center; }
-.spread-controls { justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 12px; }
+.spread-key, .spread-key span { display: flex; align-items: center; }
 .season-shortcut { margin-inline-start: 11px; border: 0; padding: 6px 0; font-size: .9em; white-space: nowrap; color: #626262; }
 .spread-key { gap: 14px; color: #646464; font-size: 12px; }
 .spread-key span { gap: 5px; }
@@ -283,9 +261,82 @@ th[aria-sort="descending"] button::after {
 .spread-range { display: flex; justify-content: space-between; font-size: 11px; line-height: 1.3; color: #676767; }
 .spread-row.empty .spread-track { display: none; }
 @media (max-width: 600px) {
-  .spread-controls { font-size: 13px; }
   .spread-head, .spread-row { grid-template-columns: 3.2rem minmax(0, 1fr) 3.6rem; column-gap: 8px; }
   .spread-row { font-size: 13px; }
   .spread-key { gap: 8px; font-size: 11px; }
   .nav-inner { column-gap: 18px; }
+}
+
+#period-dialog {
+  width: min(340px, calc(100% - 32px));
+  max-width: 100%;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  border-radius: 14px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 12px 40px rgb(0 0 0 / .14);
+}
+#period-dialog::backdrop { background: rgb(0 0 0 / .38); }
+html:has(#period-dialog[open]) { overflow: hidden; }
+.period-sheet {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+  max-height: 80dvh;
+  padding: 8px 8px 10px;
+}
+.period-sheet header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline-start: 12px;
+}
+.period-sheet h2 { margin: 0; font-size: 19px; letter-spacing: -.045em; }
+.close-period {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  color: #626262;
+}
+.period-options {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-top: 4px;
+}
+.period-options button {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 6px;
+  text-align: left;
+  font-weight: 500;
+}
+.period-options small { color: #686868; font-size: 12px; font-weight: 450; }
+.period-options button[aria-pressed="true"] { background: #f0f0f0; color: var(--ink); }
+.period-options button[aria-pressed="true"]::after {
+  content: "";
+  width: 5px;
+  height: 10px;
+  margin-inline: auto 3px;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: translateY(-1px) rotate(45deg);
+}
+.period-sheet button:focus-visible { outline: 1px solid currentColor; outline-offset: -3px; }
+@media (hover: hover) {
+  .period-options button[aria-pressed="false"]:hover, .close-period:hover { background: #f6f6f6; }
+}
+@media (max-width: 600px) {
+  #period-dialog { inset: auto 0 0; width: 100%; margin: 0; border-radius: 16px 16px 0 0; }
+  .period-sheet { padding: 10px 12px max(14px, env(safe-area-inset-bottom)); }
+  .period-options button { min-height: 48px; font-size: 16px; }
 }

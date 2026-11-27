@@ -1,0 +1,23 @@
+---
+interface Props { periods: number[] }
+const { periods } = Astro.props;
+const latest = periods.at(-1);
+---
+<dialog id="period-dialog" aria-labelledby="period-dialog-title">
+  <div class="period-sheet">
+    <header>
+      <h2 id="period-dialog-title">Scoring period</h2>
+      <button type="button" class="close-period" aria-label="Close scoring period picker">
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="m3 3 10 10M13 3 3 13" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      </button>
+    </header>
+    <div class="period-options">
+      <button type="button" data-period="0" aria-pressed={latest === undefined}>Season to date</button>
+      {[...periods].reverse().map(week =>
+        <button type="button" data-period={week} aria-pressed={week === latest}>
+          Week {week}{week === latest && <small>Current</small>}
+        </button>
+      )}
+    </div>
+  </div>
+</dialog>
