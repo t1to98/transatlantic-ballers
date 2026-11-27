@@ -2,19 +2,21 @@
 interface Props { id: string; periods: number[]; label: string }
 const { id, periods, label } = Astro.props;
 const latest = periods.at(-1);
+const weekLabel = (week: number) => week === latest ? `Week ${week} • Current` : `Week ${week}`;
 ---
 <div class="period-picker" role="group" aria-label={label}>
   <button type="button" class="week-step" data-step="-1" aria-label="Previous week" disabled={periods.length < 2}>
     <span aria-hidden="true">‹</span>
   </button>
   <span class="period-field">
-    <span class="period-label" aria-hidden="true">Week {latest} · In progress</span>
+    <span class="period-label" aria-hidden="true">{latest === undefined ? 'Season to date' : weekLabel(latest)}</span>
     <select id={id} aria-label={label} autocomplete="off">
       <option value="0">Season to date</option>
-      {[...periods].reverse().map(week => <option value={week} selected={week === latest}>Week {week} · {week === latest ? 'In progress' : 'Final'}</option>)}
+      {[...periods].reverse().map(week => <option value={week} selected={week === latest}>{weekLabel(week)}</option>)}
     </select>
   </span>
   <button type="button" class="week-step" data-step="1" aria-label="Go to season to date">
     <span aria-hidden="true">›</span>
   </button>
+  <button type="button" class="season-shortcut">Season to date</button>
 </div>

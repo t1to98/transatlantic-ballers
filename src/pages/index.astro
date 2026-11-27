@@ -31,10 +31,7 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <section id="spread" aria-labelledby="spread-heading">
   <h2 id="spread-heading">Category spread</h2>
   <div class="spread-controls">
-    <div class="spread-period-controls">
-      <PeriodPicker id="spread-period" periods={periods} label="Category spread period" />
-      <button type="button" id="spread-season">Season to date</button>
-    </div>
+    <PeriodPicker id="spread-period" periods={periods} label="Category spread period" />
     <div class="spread-key"><span><i class="band-key"></i>Middle 50%</span><span><i class="median-key"></i>Median</span></div>
   </div>
   <p id="spread-note" hidden>{season.note}</p>

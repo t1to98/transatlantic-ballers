@@ -30,8 +30,9 @@
 }
 .period-field select, .period-label {
   grid-area: 1 / 1;
-  padding: 4px 17px 4px 5px;
+  padding: 4px 16px;
 }
+.period-label { text-align: center; white-space: nowrap; }
 .period-field select {
   appearance: none;
   opacity: 0;
@@ -73,7 +74,9 @@
     background-color: #f2f2f2;
   }
   .week-step:enabled:hover { color: #424242; }
-  .period-field:hover .period-label, #spread-season:hover, th [data-sort]:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .period-field:hover::after { border-color: #424242; }
+  .period-picker .season-shortcut:hover { color: var(--ink); }
+  th [data-sort]:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 #chart [data-team] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 #chart [data-team]:focus { outline: none; }
@@ -193,8 +196,7 @@ th[aria-sort="descending"] button::after {
 #spread h2 { margin-bottom: 12px; }
 .spread-controls, .spread-key, .spread-key span { display: flex; align-items: center; }
 .spread-controls { justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 12px; }
-.spread-period-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
-#spread-season { border: 0; padding: 6px 0; font-size: .9em; color: #626262; }
+.season-shortcut { margin-inline-start: 11px; border: 0; padding: 6px 0; font-size: .9em; white-space: nowrap; color: #626262; }
 .spread-key { gap: 14px; color: #646464; font-size: 12px; }
 .spread-key span { gap: 5px; }
 .band-key { width: 16px; height: 8px; background: #dce1e4; }

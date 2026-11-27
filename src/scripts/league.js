@@ -47,7 +47,6 @@ function renderTable(){
 }
 const pickers = document.querySelectorAll('.period-picker');
 const periodOrder = [...periodNumbers, 0];
-const seasonShortcut = document.querySelector('#spread-season');
 let lastWeek = currentPeriod;
 function stepTo(direction) {
   return periodOrder[periodOrder.indexOf(currentPeriod) + direction];
@@ -56,8 +55,8 @@ function showPeriod(week) {
   if (!rowsByPeriod.has(week)) return;
   currentPeriod = week;
   if (week !== 0) lastWeek = week;
-  seasonShortcut.textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
   for (const picker of pickers) {
+    picker.querySelector('.season-shortcut').textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
     const select = picker.querySelector('select');
     select.value = String(week);
     picker.querySelector('.period-label').textContent = select.selectedOptions[0].text;
@@ -75,8 +74,8 @@ function showPeriod(week) {
   renderTable();
   renderSpread(rowsByPeriod.get(week));
 }
-seasonShortcut.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
 for (const picker of pickers) {
+  picker.querySelector('.season-shortcut').addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
   picker.querySelector('select').addEventListener('change', event => showPeriod(Number(event.target.value)));
   for (const button of picker.querySelectorAll('[data-step]'))
     button.addEventListener('click', () => showPeriod(stepTo(Number(button.dataset.step))));
