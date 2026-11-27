@@ -21,12 +21,13 @@
 .period-field::after {
   content: "";
   position: absolute;
+  top: 50%;
   right: 4px;
   width: 4px;
   height: 4px;
   border: solid var(--picker-caret, #838383);
   border-width: 0 1px 1px 0;
-  transform: translateY(-1px) rotate(45deg);
+  transform: translateY(-75%) rotate(45deg);
   pointer-events: none;
 }
 .period-label { white-space: nowrap; }
