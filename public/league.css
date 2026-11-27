@@ -140,6 +140,34 @@ th[aria-sort="descending"] button::after {
 }
 .section-heading h2 { margin: 0; }
 .section-heading > :last-child { flex: none; }
+.view-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px;
+  border: 1px solid #dedede;
+  border-radius: 999px;
+}
+.view-toggle button {
+  position: relative;
+  min-width: 44px;
+  padding: 3px 11px;
+  border: 0;
+  border-radius: inherit;
+  color: #626262;
+  font-size: .8125rem;
+  font-weight: 550;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.view-toggle button[aria-pressed="true"] { background: #e9e9e9; color: var(--ink); }
+.view-toggle button:focus-visible { outline: 1px solid currentColor; outline-offset: -1px; }
+@media (hover: hover) {
+  .view-toggle button[aria-pressed="false"]:hover { background: #f6f6f6; color: var(--ink); }
+}
+@media (pointer: coarse) {
+  /* Extend each tap target vertically beyond the visible pill. */
+  .view-toggle button::after { content: ""; position: absolute; inset: -12px 0; }
+}
 #chart .selected-week { fill: var(--ink); font-weight: 700; }
 .segments {
   display: flex;

@@ -30,7 +30,7 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <section id="power" aria-labelledby="power-heading">
   <div class="section-heading">
     <h2 id="power-heading">Power rankings</h2>
-    <div class="segments" role="group" aria-label="Power rankings display">
+    <div class="view-toggle" role="group" aria-label="Power rankings display">
       <button type="button" id="rank" aria-pressed="true">Rank</button>
       <button type="button" id="production" aria-pressed="false">Per game</button>
     </div>
@@ -60,7 +60,7 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <section id="motion">
   <div class="section-heading">
     <h2>Weekly rankings</h2>
-    <div class="segments" role="group" aria-label="Chart scale">
+    <div class="view-toggle" role="group" aria-label="Chart scale">
       <button data-scale="rank" aria-pressed="true">Rank</button>
       <button data-scale="value" aria-pressed="false">Value</button>
     </div>
