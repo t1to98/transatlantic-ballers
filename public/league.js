@@ -60,7 +60,7 @@ function highlight(id){
   for(const group of chart.querySelectorAll('[data-team]')){
     group.classList.toggle('muted',Boolean(id && group.dataset.team!==id));
     group.classList.toggle('highlighted',group.dataset.team===id);
-    group.querySelector('[role="button"]').setAttribute('aria-pressed',String(group.dataset.team===selected));
+    group.setAttribute('aria-pressed',String(group.dataset.team===selected));
   }
 }
 function draw(){
@@ -73,18 +73,17 @@ function draw(){
   weeks.forEach((_,i)=>svg('text',{x:x(i),y:362,'text-anchor':'middle'},chart,'W'+(i+1)));
   const labels=[];
   teams.forEach((t,i)=>{
-    const g=svg('g',{'data-team':t.id});
-    const line=svg('g',{tabindex:0,role:'button','aria-label':'Pin '+t.name},g);
-    g.onpointerenter=e=>{if(e.pointerType!=='touch')highlight(t.id)};
+    const g=svg('g',{'data-team':t.id,tabindex:0,role:'button','aria-label':'Pin '+t.name});
+    g.onpointerenter=e=>{if(e.pointerType!=='touch')highlight(selected??t.id)};
     g.onpointerleave=()=>highlight(selected);
-    g.onfocusin=()=>highlight(t.id);
+    g.onfocusin=()=>highlight(selected??t.id);
     g.onfocusout=()=>highlight(selected);
     const toggle=()=>{
       selected=selected===t.id?null:t.id;
       highlight(selected);
     };
-    line.onclick=toggle;
-    line.onkeydown=e=>{
+    g.onclick=toggle;
+    g.onkeydown=e=>{
       if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}
       if(e.key==='Escape'){selected=null;highlight(null)}
     };
@@ -93,12 +92,12 @@ function draw(){
       const row=week.find(a=>a.id===t.id),r=metric<0?row.rank:row.ranks[metric];
       if(r===null)return;
       path+=(path?' L':'M')+x(w)+' '+y(r);
-      const dot=svg('circle',{cx:x(w),cy:y(r),r:3,fill:colors[i]},line);
+      const dot=svg('circle',{cx:x(w),cy:y(r),r:3,fill:colors[i]},g);
       svg('title',{},dot,row.name+' · Week '+(w+1)+' · Rank '+r);
-      if(w===weeks.length-1)labels.push({g,r,id:t.id,name:row.name,color:colors[i]});
+      if(w===weeks.length-1)labels.push({g,r,name:row.name,color:colors[i]});
     });
-    line.prepend(svg('path',{d:path,fill:'none',stroke:colors[i],class:'trajectory','stroke-width':2},line));
-    line.prepend(svg('path',{d:path,fill:'none',stroke:'transparent','stroke-width':10},line));
+    g.prepend(svg('path',{d:path,fill:'none',stroke:colors[i],class:'trajectory','stroke-width':2},g));
+    g.prepend(svg('path',{d:path,fill:'none',stroke:'transparent','stroke-width':10},g));
   });
   labels.sort((a,b)=>a.r-b.r||a.name.localeCompare(b.name));
   let last=-16;
@@ -111,9 +110,7 @@ function draw(){
     label.top=Math.min(label.top,ceiling);
     ceiling=label.top-17;
     svg('line',{x1:746,x2:764,y1:y(label.r),y2:label.top,stroke:label.color,opacity:.55},label.g);
-    const roster=svg('a',{href:rosterUrl(label.id),target:'_blank',rel:'noopener',
-      'aria-label':'Open '+label.name+' on Fantrax (new tab)'},label.g);
-    svg('text',{x:769,y:label.top+4,fill:label.color},roster,label.r+'  '+label.name);
+    svg('text',{x:769,y:label.top+4,fill:label.color},label.g,label.r+'  '+label.name);
   }
   highlight(selected);
   document.querySelectorAll('[data-metric]').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.metric===metric)));

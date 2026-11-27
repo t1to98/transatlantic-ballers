@@ -23,6 +23,7 @@
   }
 }
 #chart [data-team] { cursor: pointer; }
+#motion > p, footer p { color: #767676; }
 #chart .muted { opacity: .13; }
 #chart .highlighted .trajectory { stroke-width: 3.5; }
 #chart .highlighted text { font-weight: 700; }
