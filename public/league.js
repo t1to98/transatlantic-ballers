@@ -8,8 +8,9 @@ function renderTable(){
   const body=document.querySelector('tbody');
   body.replaceChildren();
   for(const t of rows){
-    const row=body.insertRow(),team=row.insertCell(),pos=document.createElement('small');
-    pos.textContent=t.rank??'—';team.append(pos,t.name);
+    const row=body.insertRow();
+    row.insertCell().textContent=t.rank??'—';
+    row.insertCell().textContent=t.name;
     row.insertCell().textContent=t.score??'—';
     row.insertCell().textContent=t.gp;
     t.ranks.forEach((r,i)=>{
