@@ -1,14 +1,11 @@
 import { categories } from '../lib/fantrax';
-import type { standings } from '../lib/rankings';
+import { weeklyRows as weeks, periodNumbers as periods, type TeamRow as Row } from './league-data';
 
-type Row = ReturnType<typeof standings>[number];
 type Point = { row: Row; week: number; rank: number; value: number; x: number; y: number };
 type Scale = 'rank' | 'value';
 
 const chart = document.querySelector<SVGSVGElement>('#chart')!;
 const tip = document.querySelector<HTMLElement>('#point-tip')!;
-const weeks: Row[][] = JSON.parse(document.querySelector('#data')!.textContent!).slice(1);
-const periods: number[] = JSON.parse(chart.dataset.weeks!);
 const teams = [...weeks[0]].sort((a, b) => a.id.localeCompare(b.id));
 const colors = ['#2659a5', '#bc4527', '#007b68', '#8549a2', '#946500', '#b03368', '#13769c',
   '#596c24', '#6a55bd', '#87543c', '#236241', '#4e657c'];

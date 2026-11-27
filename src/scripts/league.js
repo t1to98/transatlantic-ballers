@@ -1,13 +1,14 @@
-const dataElement=document.querySelector('#data');
-const periods=JSON.parse(dataElement.textContent);
+import { periodNumbers, rowsByPeriod, rosterBase } from './league-data';
+import { renderSpread } from './category-spread';
+
 function rosterUrl(teamId){
-  return dataElement.dataset.rosterBase+';teamId='+encodeURIComponent(teamId);
+  return rosterBase+';teamId='+encodeURIComponent(teamId);
 }
-const period=document.querySelector('#period');
+let currentPeriod=periodNumbers.at(-1);
 let bestFirst=true;
 let sort=-1, production=false;
 function renderTable(){
-  const rows=[...periods[Number(period.value)]];
+  const rows=[...rowsByPeriod.get(currentPeriod)];
   const sortValue=t=>sort<0?t.rank:production?t.values[sort]:t.ranks[sort];
   const ascending=production && sort>=0 ? !bestFirst : bestFirst;
   rows.sort((a,b)=>{
@@ -38,28 +39,51 @@ function renderTable(){
       cell.textContent=production?(percent?(100*t.values[i]).toFixed(2)+'%':t.values[i].toFixed(2)):r;
     });
   }
-  const note=document.querySelector('#note');
-  note.hidden=period.value!=='0' || !note.textContent.trim();
   for(const button of document.querySelectorAll('[data-sort]')){
     if(Number(button.dataset.sort)===sort)button.parentNode.setAttribute('aria-sort',ascending?'ascending':'descending');
     else button.parentNode.removeAttribute('aria-sort');
   }
   for(const id of ['rank','production'])document.getElementById(id).setAttribute('aria-pressed',String((id==='production')===production));
 }
-period.onchange=renderTable;
+const pickers = document.querySelectorAll('.period-picker');
+function stepTo(direction) {
+  if (currentPeriod === 0) return direction < 0 ? periodNumbers.at(-1) : undefined;
+  return periodNumbers[periodNumbers.indexOf(currentPeriod) + direction];
+}
+function showPeriod(week) {
+  if (!rowsByPeriod.has(week)) return;
+  currentPeriod = week;
+  for (const picker of pickers) {
+    picker.querySelector('select').value = String(week);
+    for (const button of picker.querySelectorAll('[data-step]')) {
+      const direction = Number(button.dataset.step);
+      button.disabled = stepTo(direction) === undefined;
+      button.setAttribute('aria-label', direction > 0 ? 'Next week' : week === 0 ? 'Go to latest week' : 'Previous week');
+    }
+  }
+  for (const note of document.querySelectorAll('#note, #spread-note'))
+    note.hidden = week !== 0 || !note.textContent.trim();
+  renderTable();
+  renderSpread(rowsByPeriod.get(week));
+}
+for (const picker of pickers) {
+  picker.querySelector('select').addEventListener('change', event => showPeriod(Number(event.target.value)));
+  for (const button of picker.querySelectorAll('[data-step]'))
+    button.addEventListener('click', () => showPeriod(stepTo(Number(button.dataset.step))));
+}
 document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const next=Number(b.dataset.sort);bestFirst=next===sort?!bestFirst:true;sort=next;renderTable()});
 for(const id of ['rank','production'])document.getElementById(id).onclick=()=>{production=id==='production';renderTable()};
-renderTable();
+showPeriod(currentPeriod);
 
-const powerLink=document.querySelector('nav a[href="#power"]');
-const weeklyLink=document.querySelector('nav a[href="#motion"]');
-const motion=document.querySelector('#motion');
-function updateNavigation(){
-  const weekly=motion.getBoundingClientRect().top<=window.innerHeight*.4 ||
-    window.scrollY>0 && window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-2;
-  powerLink.toggleAttribute('aria-current',!weekly);
-  weeklyLink.toggleAttribute('aria-current',weekly);
-  (weekly?weeklyLink:powerLink).setAttribute('aria-current','location');
+const links = [...document.querySelectorAll('nav a[href]')].filter(link => link.hash !== '#top');
+const sections = links.map(link => document.querySelector(link.hash));
+function updateNavigation() {
+  const atBottom = window.scrollY > 0 && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2;
+  const active = atBottom ? sections.at(-1) : sections.filter(section => section.getBoundingClientRect().top <= window.innerHeight * .4).at(-1) ?? sections[0];
+  for (const link of links) {
+    if (link.hash === '#' + active.id) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  }
 }
 window.addEventListener('scroll',updateNavigation,{passive:true});
 window.addEventListener('resize',updateNavigation);
