@@ -1,0 +1,107 @@
+{
+  "source": "https://www.fantrax.com/fantasy/league/jdc94v3kmtvppxcs/standings;view=SEASON_STATS",
+  "observedDateUtc": "2026-11-27",
+  "throughPeriod": 6,
+  "matchupRevision": "80f83e31d2f3cddf82cd4af0651d425c971d77e4",
+  "description": "Fantrax Season Stats, YTD, actuals. FG% and FT% are the full-precision values from the category-table tooltips. For the three team-weeks below, exactly one set of integer shooting totals reproduces both the weekly box scores and these season percentages.",
+  "seasonPercentages": {
+    "ajj9g0wqmty78a4z": {
+      "FG%": 0.508197,
+      "FT%": 0.77204
+    },
+    "514rus2omtzxouai": {
+      "FG%": 0.485502,
+      "FT%": 0.830357
+    },
+    "zagz2tzimtwzkgnz": {
+      "FG%": 0.476052,
+      "FT%": 0.768047
+    },
+    "8ygqjx60muhjasjk": {
+      "FG%": 0.473954,
+      "FT%": 0.764626
+    },
+    "8k4hbuhomu7d2dsv": {
+      "FG%": 0.47292,
+      "FT%": 0.816692
+    },
+    "2r8t9jurmtvrepo2": {
+      "FG%": 0.463968,
+      "FT%": 0.796807
+    },
+    "gs2i56odmtvppxzv": {
+      "FG%": 0.463351,
+      "FT%": 0.744395
+    },
+    "ni62wxhhmtyse8hs": {
+      "FG%": 0.460417,
+      "FT%": 0.800272
+    },
+    "nq4m0yshmu01xvyb": {
+      "FG%": 0.454358,
+      "FT%": 0.817097
+    },
+    "gitafl16mu1g3xog": {
+      "FG%": 0.452623,
+      "FT%": 0.787078
+    },
+    "tpvz7olmmtwwo3wx": {
+      "FG%": 0.451954,
+      "FT%": 0.811141
+    },
+    "tkwzhf4fmtx0u4jr": {
+      "FG%": 0.441534,
+      "FT%": 0.812802
+    }
+  },
+  "resolvedWeeks": [
+    {
+      "period": 1,
+      "teamId": "2r8t9jurmtvrepo2",
+      "points": 431,
+      "threes": 39,
+      "fgPct": 0.429825,
+      "ftPct": 0.784,
+      "fg": {
+        "made": 147,
+        "attempted": 342
+      },
+      "ft": {
+        "made": 98,
+        "attempted": 125
+      }
+    },
+    {
+      "period": 2,
+      "teamId": "ajj9g0wqmty78a4z",
+      "points": 581,
+      "threes": 53,
+      "fgPct": 0.529412,
+      "ftPct": 0.8,
+      "fg": {
+        "made": 216,
+        "attempted": 408
+      },
+      "ft": {
+        "made": 96,
+        "attempted": 120
+      }
+    },
+    {
+      "period": 4,
+      "teamId": "gs2i56odmtvppxzv",
+      "points": 482,
+      "threes": 66,
+      "fgPct": 0.444444,
+      "ftPct": 0.8,
+      "fg": {
+        "made": 176,
+        "attempted": 396
+      },
+      "ft": {
+        "made": 64,
+        "attempted": 80
+      }
+    }
+  ]
+}

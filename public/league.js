@@ -8,12 +8,13 @@ let bestFirst=true;
 let sort=-1, production=false, metric=-1, selected=null;
 function renderTable(){
   const rows=[...periods[Number(period.value)]];
-  const rank=t=>sort<0?t.rank:t.ranks[sort];
+  const sortValue=t=>sort<0?t.rank:production?t.values[sort]:t.ranks[sort];
+  const ascending=production && sort>=0 ? !bestFirst : bestFirst;
   rows.sort((a,b)=>{
-    const left=rank(a), right=rank(b);
+    const left=sortValue(a), right=sortValue(b);
     if(left===null && right!==null)return 1;
     if(right===null && left!==null)return -1;
-    return (bestFirst?1:-1)*(left-right)||a.name.localeCompare(b.name);
+    return (ascending?1:-1)*(left-right)||a.name.localeCompare(b.name);
   });
   const body=document.querySelector('tbody');
   body.replaceChildren();
@@ -31,14 +32,14 @@ function renderTable(){
     row.insertCell().textContent=t.gp;
     t.ranks.forEach((r,i)=>{
       const cell=row.insertCell();
-      if(r===null){cell.textContent='—';return;}
-      cell.className='tier'+Math.min(3,Math.floor((Math.ceil(r)-1)/3));
+      if(r===null && (!production || t.values[i]===null)){cell.textContent='—';return;}
+      if(r!==null)cell.className='tier'+Math.min(3,Math.floor((Math.ceil(r)-1)/3));
       const percent=i===0||i===2;
       cell.textContent=production?(percent?(100*t.values[i]).toFixed(2)+'%':t.values[i].toFixed(2)):r;
     });
   }
-  document.querySelector('#note').hidden=period.value!=='0';
-  const ascending=production && sort>=0 ? !bestFirst : bestFirst;
+  const note=document.querySelector('#note');
+  note.hidden=period.value!=='0' || !note.textContent.trim();
   for(const button of document.querySelectorAll('[data-sort]')){
     if(Number(button.dataset.sort)===sort)button.parentNode.setAttribute('aria-sort',ascending?'ascending':'descending');
     else button.parentNode.removeAttribute('aria-sort');

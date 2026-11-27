@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Check shooting calculations
+        run: node --test tests/shooting.test.ts
       - name: Fetch and validate historical weeks
         env:
           FULL_BACKFILL: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
