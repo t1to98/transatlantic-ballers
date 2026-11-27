@@ -1,10 +1,16 @@
 const periods=JSON.parse(document.querySelector('#data').textContent);
 const period=document.querySelector('#period');
+let bestFirst=true;
 let sort=-1, production=false, metric=-1, selected=null;
 function renderTable(){
   const rows=[...periods[Number(period.value)]];
   const rank=t=>sort<0?t.rank:t.ranks[sort];
-  rows.sort((a,b)=>(rank(a)??99)-(rank(b)??99)||a.name.localeCompare(b.name));
+  rows.sort((a,b)=>{
+    const left=rank(a), right=rank(b);
+    if(left===null && right!==null)return 1;
+    if(right===null && left!==null)return -1;
+    return (bestFirst?1:-1)*(left-right)||a.name.localeCompare(b.name);
+  });
   const body=document.querySelector('tbody');
   body.replaceChildren();
   for(const t of rows){
@@ -22,11 +28,15 @@ function renderTable(){
     });
   }
   document.querySelector('#note').hidden=period.value!=='0';
-  document.querySelectorAll('[data-sort]').forEach(b=>b.parentNode.setAttribute('aria-sort',+b.dataset.sort===sort?'ascending':'none'));
+  const ascending=production && sort>=0 ? !bestFirst : bestFirst;
+  for(const button of document.querySelectorAll('[data-sort]')){
+    if(Number(button.dataset.sort)===sort)button.parentNode.setAttribute('aria-sort',ascending?'ascending':'descending');
+    else button.parentNode.removeAttribute('aria-sort');
+  }
   for(const id of ['rank','production'])document.getElementById(id).setAttribute('aria-pressed',String((id==='production')===production));
 }
 period.onchange=renderTable;
-document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{sort=+b.dataset.sort;renderTable()});
+document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const next=Number(b.dataset.sort);bestFirst=next===sort?!bestFirst:true;sort=next;renderTable()});
 for(const id of ['rank','production'])document.getElementById(id).onclick=()=>{production=id==='production';renderTable()};
 const colors=['#2659a5','#bc4527','#007b68','#8549a2','#946500','#b03368','#13769c','#596c24','#6a55bd','#87543c','#236241','#4e657c'];
 const teams=[...periods[1]].sort((a,b)=>a.id.localeCompare(b.id));
