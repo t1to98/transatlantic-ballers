@@ -107,3 +107,17 @@ function draw(){
 }
 document.querySelectorAll('[data-metric]').forEach(b=>b.onclick=()=>{metric=+b.dataset.metric;draw()});
 renderTable();draw();
+
+const powerLink=document.querySelector('nav a[href="#power"]');
+const weeklyLink=document.querySelector('nav a[href="#motion"]');
+const motion=document.querySelector('#motion');
+function updateNavigation(){
+  const weekly=motion.getBoundingClientRect().top<=window.innerHeight*.4 ||
+    window.scrollY>0 && window.scrollY+window.innerHeight>=document.documentElement.scrollHeight-2;
+  powerLink.toggleAttribute('aria-current',!weekly);
+  weeklyLink.toggleAttribute('aria-current',weekly);
+  (weekly?weeklyLink:powerLink).setAttribute('aria-current','location');
+}
+window.addEventListener('scroll',updateNavigation,{passive:true});
+window.addEventListener('resize',updateNavigation);
+updateNavigation();
