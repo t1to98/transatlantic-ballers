@@ -188,7 +188,7 @@ th[aria-sort="descending"] button::after {
 }
 
 .nav-inner a { color: #bcbcbc; font-size: 14px; }
-.nav-inner a:hover, .nav-inner a:focus-visible, .nav-inner a[aria-current] {
+.nav-inner a:hover, .nav-inner a:focus-visible {
   color: white;
   text-decoration: none;
 }
