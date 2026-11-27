@@ -1,19 +1,17 @@
 ---
-interface Props { id: string; periods: number[]; label: string; returnToCurrent?: boolean }
-const { id, periods, label, returnToCurrent = false } = Astro.props;
+interface Props { periods: number[] }
+const { periods } = Astro.props;
 const latest = periods.at(-1);
 ---
-<div class="period-picker" role="group" aria-label={label}>
+<div class="period-picker" role="group" aria-label="Scoring period">
   <button type="button" class="week-step" data-step="-1" aria-label="Previous week" disabled={periods.length < 2}>
     <span aria-hidden="true">‹</span>
   </button>
-  <button type="button" class="period-field" id={id} aria-haspopup="dialog" aria-controls="period-dialog" aria-expanded="false">
+  <button type="button" class="period-field" id="nav-period" aria-haspopup="dialog" aria-controls="period-dialog" aria-expanded="false">
     <span class="period-label">{latest === undefined ? 'Season to date' : `Week ${latest} • Current`}</span>
   </button>
   <button type="button" class="week-step" data-step="1" aria-label="Go to season to date">
     <span aria-hidden="true">›</span>
   </button>
-  {returnToCurrent
-    ? <button type="button" class="season-shortcut" data-return-current hidden>Back to Week {latest}</button>
-    : <button type="button" class="season-shortcut" data-toggle-season>Season to date</button>}
+  <button type="button" class="season-shortcut" data-return-current hidden>Back to Week {latest}</button>
 </div>

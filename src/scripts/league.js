@@ -47,37 +47,30 @@ function renderTable(){
   }
   for(const id of ['rank','production'])document.getElementById(id).setAttribute('aria-pressed',String((id==='production')===production));
 }
-const pickers = document.querySelectorAll('.period-picker');
+const picker = document.querySelector('.period-picker');
+const trigger = picker.querySelector('.period-field');
+const returnButton = picker.querySelector('[data-return-current]');
+const stepButtons = picker.querySelectorAll('[data-step]');
 const dialog = document.getElementById('period-dialog');
 const options = [...dialog.querySelectorAll('[data-period]')];
 const periodOrder = [...periodNumbers, 0];
-let lastWeek = currentPeriod;
 function stepTo(direction) {
   return periodOrder[periodOrder.indexOf(currentPeriod) + direction];
 }
 function showPeriod(week) {
   if (!rowsByPeriod.has(week)) return;
   currentPeriod = week;
-  if (week !== 0) lastWeek = week;
   const label = week === 0 ? 'Season to date' : 'Week ' + week + (week === latestWeek ? ' • Current' : '');
   for (const option of options) option.setAttribute('aria-pressed', String(Number(option.dataset.period) === week));
-  for (const picker of pickers) {
-    picker.querySelector('.period-label').textContent = label;
-    const shortcut = picker.querySelector('[data-toggle-season]');
-    if (shortcut) {
-      shortcut.hidden = latestWeek === undefined;
-      shortcut.textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
-    }
-    const returnButton = picker.querySelector('[data-return-current]');
-    if (returnButton) returnButton.hidden = latestWeek === undefined || week === latestWeek;
-    for (const button of picker.querySelectorAll('[data-step]')) {
-      const direction = Number(button.dataset.step);
-      const next = stepTo(direction);
-      button.disabled = next === undefined;
-      const label = next === 0 ? 'Go to season to date' : week === 0 && direction < 0 ? 'Go to latest week' : direction > 0 ? 'Next week' : 'Previous week';
-      button.setAttribute('aria-label', label);
-      button.title = button.disabled ? '' : label;
-    }
+  picker.querySelector('.period-label').textContent = label;
+  returnButton.hidden = latestWeek === undefined || week === latestWeek;
+  for (const button of stepButtons) {
+    const direction = Number(button.dataset.step);
+    const next = stepTo(direction);
+    button.disabled = next === undefined;
+    const label = next === 0 ? 'Go to season to date' : week === 0 && direction < 0 ? 'Go to latest week' : direction > 0 ? 'Next week' : 'Previous week';
+    button.setAttribute('aria-label', label);
+    button.title = button.disabled ? '' : label;
   }
   for (const note of document.querySelectorAll('#note, #spread-note'))
     note.hidden = week !== 0 || !note.textContent.trim();
@@ -85,22 +78,18 @@ function showPeriod(week) {
   renderSpread(rowsByPeriod.get(week));
   showChartPeriod(week);
 }
-for (const picker of pickers) {
-  const trigger = picker.querySelector('.period-field');
-  trigger.addEventListener('click', () => {
-    trigger.focus({ preventScroll: true });
-    trigger.setAttribute('aria-expanded', 'true');
-    dialog.showModal();
-    dialog.querySelector('[aria-pressed="true"]').focus();
-  });
-  picker.querySelector('[data-toggle-season]')?.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
-  picker.querySelector('[data-return-current]')?.addEventListener('click', () => {
-    showPeriod(latestWeek);
-    trigger.focus({ preventScroll: true });
-  });
-  for (const button of picker.querySelectorAll('[data-step]'))
-    button.addEventListener('click', () => showPeriod(stepTo(Number(button.dataset.step))));
-}
+trigger.addEventListener('click', () => {
+  trigger.focus({ preventScroll: true });
+  trigger.setAttribute('aria-expanded', 'true');
+  dialog.showModal();
+  dialog.querySelector('[aria-pressed="true"]').focus();
+});
+returnButton.addEventListener('click', () => {
+  showPeriod(latestWeek);
+  trigger.focus({ preventScroll: true });
+});
+for (const button of stepButtons)
+  button.addEventListener('click', () => showPeriod(stepTo(Number(button.dataset.step))));
 for (const option of options) {
   option.addEventListener('click', () => {
     showPeriod(Number(option.dataset.period));
@@ -112,7 +101,7 @@ dialog.addEventListener('click', event => {
   if (event.target === dialog) dialog.close();
 });
 dialog.addEventListener('close', () => {
-  for (const trigger of document.querySelectorAll('.period-field')) trigger.setAttribute('aria-expanded', 'false');
+  trigger.setAttribute('aria-expanded', 'false');
 });
 document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const next=Number(b.dataset.sort);bestFirst=next===sort?!bestFirst:true;sort=next;renderTable()});
 for(const id of ['rank','production'])document.getElementById(id).onclick=()=>{production=id==='production';renderTable()};

@@ -17,7 +17,7 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Transatlantic Ballers · League rankings</title><link rel="stylesheet" href="/league.css"/></head>
 <body id="top">
 <nav aria-label="Rankings"><div class="nav-inner">
-  <PeriodPicker id="nav-period" periods={periods} label="Navigation scoring period" returnToCurrent />
+  <PeriodPicker periods={periods} />
   <div class="nav-sections">
     <a href="#power" aria-current="location">Power</a><a href="#spread">Spread</a><a href="#motion">Weekly</a>
   </div>
@@ -27,7 +27,14 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
   <img class="league-crest" src={crest.src} width="76" height="76" alt="" />
   <span>Transatlantic Ballers</span>
 </h1>
-<section id="power"><h2>Power rankings</h2><div class="controls"><PeriodPicker id="period" periods={periods} label="Scoring period" /><div><button id="rank" aria-pressed="true">Ranks</button><button id="production" aria-pressed="false">Per game</button></div></div>
+<section id="power" aria-labelledby="power-heading">
+  <div class="section-heading">
+    <h2 id="power-heading">Power rankings</h2>
+    <div class="segments" role="group" aria-label="Power rankings display">
+      <button type="button" id="rank" aria-pressed="true">Rank</button>
+      <button type="button" id="production" aria-pressed="false">Per game</button>
+    </div>
+  </div>
 <p id="note" hidden>{season.note}</p>
 <div class="scroll"><table><thead><tr><th><button data-sort="-1">Rank</button></th><th>Team</th><th>Roto</th><th>GP</th>{categories.map((c,i)=><th><button data-sort={i}>{c}</button></th>)}</tr></thead><tbody></tbody></table></div>
 <div class="key">Category rank {['1–3','4–6','7–9','10–12'].map((v,i)=><span><b class={'tier'+i}></b>{v}</span>)}</div></section>
