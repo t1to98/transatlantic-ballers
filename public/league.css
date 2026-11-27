@@ -154,7 +154,10 @@ th[aria-sort="descending"] button::after {
 }
 .nav-inner a { display: flex; align-items: center; height: 44px; font-weight: 550; }
 
-.chart-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; }
+#motion h2 { margin-bottom: 12px; }
+.chart-controls { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+.chart-controls > .segments { flex: none; }
+#chart .selected-week { fill: var(--ink); font-weight: 700; }
 .segments {
   display: flex;
   width: fit-content;
@@ -170,6 +173,20 @@ th[aria-sort="descending"] button::after {
   .nav-inner { padding-inline: 12px; }
 
   .segments button { font-size: 12px; padding: 7px 5px; }
+  .chart-controls .period-picker { font-size: 13px; }
+  .chart-controls .week-step { width: 24px; }
+  .chart-controls .period-label { padding-inline: 12px; }
+  .chart-controls select { position: absolute; inset: 0; }
+  .chart-controls .season-shortcut { margin-inline-start: 4px; }
+}
+@media (max-width: 360px) {
+  .chart-controls { margin-inline: -4px; gap: 2px; }
+  .chart-controls .period-picker { font-size: 12px; gap: 0; }
+  .chart-controls .period-label { padding-inline: 9px; }
+  .chart-controls .period-field::after { right: 1px; }
+  .chart-controls .week-step { width: 20px; }
+  .chart-controls .season-shortcut { margin-inline-start: 0; }
+  .chart-controls .segments button { padding-inline: 3px; }
 }
 
 .nav-inner a { color: #bcbcbc; font-size: 14px; }

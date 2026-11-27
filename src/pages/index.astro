@@ -53,15 +53,16 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 </section>
 <section id="motion">
   <h2>Weekly rankings</h2>
-  <p>Hover over a dot for its numbers. Click or tap a line or team name to pin or unpin it.</p>
   <div class="chart-controls">
-    <div id="pills" class="segments" role="group" aria-label="Chart category">
-      {['Overall',...categories].map((c,i)=><button data-metric={i-1} aria-pressed={i===0}>{c}</button>)}
-    </div>
+    <PeriodPicker id="weekly-period" periods={periods} label="Weekly rankings period" />
     <div class="segments" role="group" aria-label="Chart scale">
       <button data-scale="rank" aria-pressed="true">Rank</button>
       <button data-scale="value" aria-pressed="false">Value</button>
     </div>
+  </div>
+  <p>Hover over a dot for its numbers. Click or tap a line or team name to pin or unpin it.</p>
+  <div id="pills" class="segments" role="group" aria-label="Chart category">
+    {['Overall',...categories].map((c,i)=><button data-metric={i-1} aria-pressed={i===0}>{c}</button>)}
   </div>
   <div class="scroll"><svg id="chart" viewBox="0 0 1000 384" role="group" aria-label="Weekly team rankings"></svg></div>
   <div id="point-tip" class="chart-tip" role="tooltip" hidden></div>
@@ -70,6 +71,5 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <script type="application/json" id="data" data-weeks={JSON.stringify(periods)} data-roster-base={rosterBase} set:html={JSON.stringify(data).replaceAll('<','\\u003c')}></script>
 <script>
   import '../scripts/league';
-  import '../scripts/weekly-chart';
 </script>
 </body></html>

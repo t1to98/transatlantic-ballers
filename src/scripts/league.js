@@ -1,5 +1,6 @@
 import { periodNumbers, rowsByPeriod, rosterBase } from './league-data';
 import { renderSpread } from './category-spread';
+import { showChartPeriod } from './weekly-chart';
 
 function rosterUrl(teamId){
   return rosterBase+';teamId='+encodeURIComponent(teamId);
@@ -74,6 +75,7 @@ function showPeriod(week) {
     note.hidden = week !== 0 || !note.textContent.trim();
   renderTable();
   renderSpread(rowsByPeriod.get(week));
+  showChartPeriod(week);
 }
 for (const picker of pickers) {
   picker.querySelector('.season-shortcut')?.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));

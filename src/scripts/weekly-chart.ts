@@ -11,6 +11,7 @@ const colors = ['#2659a5', '#bc4527', '#007b68', '#8549a2', '#946500', '#b03368'
   '#596c24', '#6a55bd', '#87543c', '#236241', '#4e657c'];
 const plot = { left: 54, right: 735, top: 31, bottom: 348 };
 let metric = -1;
+let selectedPeriod: number;
 let scale: Scale = 'rank';
 let pinned: string | null = null;
 let points: Point[] = [];
@@ -125,8 +126,11 @@ function draw() {
       chart, String(tick) + (scale === 'value' && shooting() ? '%' : ''));
   }
   periods.forEach((week, i) => {
-    if (i % Math.ceil(periods.length / 12) === 0 || i === periods.length - 1)
-      svg('text', { x: x(i), y: 375, 'text-anchor': 'middle', class: 'axis-label' }, chart, 'W' + week);
+    const selected = week === selectedPeriod;
+    if (selected)
+      svg('line', { x1: x(i), x2: x(i), y1: plot.top, y2: plot.bottom, stroke: '#b7b7b7', 'stroke-dasharray': '2 4' });
+    if (selected || i % Math.ceil(periods.length / 12) === 0 || i === periods.length - 1)
+      svg('text', { x: x(i), y: 375, 'text-anchor': 'middle', class: selected ? 'axis-label selected-week' : 'axis-label' }, chart, 'W' + week);
   });
 
   const endpoints: { group: SVGGElement; point: Point; labelY: number; color: string }[] = [];
@@ -237,7 +241,7 @@ document.addEventListener('keydown', event => {
 });
 window.addEventListener('scroll', hideTip, { capture: true, passive: true });
 window.addEventListener('resize', hideTip);
-for (const button of document.querySelectorAll<HTMLButtonElement>('.chart-controls button')) {
+for (const button of document.querySelectorAll<HTMLButtonElement>('#motion [data-metric], #motion [data-scale]')) {
   button.addEventListener('click', () => {
     if (button.dataset.metric !== undefined) metric = Number(button.dataset.metric);
     else scale = button.dataset.scale as Scale;
@@ -246,4 +250,8 @@ for (const button of document.querySelectorAll<HTMLButtonElement>('.chart-contro
     draw();
   });
 }
-draw();
+export function showChartPeriod(period: number) {
+  if (period === selectedPeriod) return;
+  selectedPeriod = period;
+  draw();
+}
