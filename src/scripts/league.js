@@ -46,19 +46,28 @@ function renderTable(){
   for(const id of ['rank','production'])document.getElementById(id).setAttribute('aria-pressed',String((id==='production')===production));
 }
 const pickers = document.querySelectorAll('.period-picker');
+const periodOrder = [...periodNumbers, 0];
+const seasonShortcut = document.querySelector('#spread-season');
+let lastWeek = currentPeriod;
 function stepTo(direction) {
-  if (currentPeriod === 0) return direction < 0 ? periodNumbers.at(-1) : undefined;
-  return periodNumbers[periodNumbers.indexOf(currentPeriod) + direction];
+  return periodOrder[periodOrder.indexOf(currentPeriod) + direction];
 }
 function showPeriod(week) {
   if (!rowsByPeriod.has(week)) return;
   currentPeriod = week;
+  if (week !== 0) lastWeek = week;
+  seasonShortcut.textContent = week === 0 ? 'Back to Week ' + lastWeek : 'Season to date';
   for (const picker of pickers) {
-    picker.querySelector('select').value = String(week);
+    const select = picker.querySelector('select');
+    select.value = String(week);
+    picker.querySelector('.period-label').textContent = select.selectedOptions[0].text;
     for (const button of picker.querySelectorAll('[data-step]')) {
       const direction = Number(button.dataset.step);
-      button.disabled = stepTo(direction) === undefined;
-      button.setAttribute('aria-label', direction > 0 ? 'Next week' : week === 0 ? 'Go to latest week' : 'Previous week');
+      const next = stepTo(direction);
+      button.disabled = next === undefined;
+      const label = next === 0 ? 'Go to season to date' : week === 0 && direction < 0 ? 'Go to latest week' : direction > 0 ? 'Next week' : 'Previous week';
+      button.setAttribute('aria-label', label);
+      button.title = button.disabled ? '' : label;
     }
   }
   for (const note of document.querySelectorAll('#note, #spread-note'))
@@ -66,6 +75,7 @@ function showPeriod(week) {
   renderTable();
   renderSpread(rowsByPeriod.get(week));
 }
+seasonShortcut.addEventListener('click', () => showPeriod(currentPeriod === 0 ? lastWeek : 0));
 for (const picker of pickers) {
   picker.querySelector('select').addEventListener('change', event => showPeriod(Number(event.target.value)));
   for (const button of picker.querySelectorAll('[data-step]'))

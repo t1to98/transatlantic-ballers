@@ -10,16 +10,39 @@
   gap: 1px;
   color: var(--ink);
 }
-.period-picker select {
-  appearance: none;
-  border: 0;
-  border-radius: 3px;
+.period-field {
+  position: relative;
+  display: inline-grid;
+  align-items: center;
   min-height: 34px;
-  padding: 4px 17px 4px 5px;
   font-weight: 550;
-  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='m1 .8 3 3 3-3' fill='none' stroke='%23838383' stroke-width='1.3'/%3E%3C/svg%3E") no-repeat right 3px center;
 }
+.period-field::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  width: 4px;
+  height: 4px;
+  border: solid #838383;
+  border-width: 0 1px 1px 0;
+  transform: translateY(-1px) rotate(45deg);
+  pointer-events: none;
+}
+.period-field select, .period-label {
+  grid-area: 1 / 1;
+  padding: 4px 17px 4px 5px;
+}
+.period-field select {
+  appearance: none;
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  border: 0;
+  font-weight: inherit;
+}
+.period-field:has(select:focus-visible) { outline: 2px solid currentColor; outline-offset: 1px; }
 .week-step {
+  color: #707070;
   display: inline-grid;
   place-items: center;
   width: 30px;
@@ -45,13 +68,12 @@
   margin-bottom: 12px;
 }
 @media (hover: hover) {
-  .controls button:enabled:not([aria-pressed="true"]):hover,
-  .week-step:enabled:hover,
-  .segments button:not([aria-pressed="true"]):hover,
-  .period-picker select:hover {
+  .controls button[aria-pressed="false"]:hover,
+  .segments button[aria-pressed="false"]:hover {
     background-color: #f2f2f2;
   }
-  th [data-sort]:hover { text-decoration: underline; text-underline-offset: 3px; }
+  .week-step:enabled:hover { color: #424242; }
+  .period-field:hover .period-label, #spread-season:hover, th [data-sort]:hover { text-decoration: underline; text-underline-offset: 3px; }
 }
 #chart [data-team] { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 #chart [data-team]:focus { outline: none; }
@@ -170,7 +192,9 @@ th[aria-sort="descending"] button::after {
 
 #spread h2 { margin-bottom: 12px; }
 .spread-controls, .spread-key, .spread-key span { display: flex; align-items: center; }
-.spread-controls { justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; }
+.spread-controls { justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 12px; }
+.spread-period-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
+#spread-season { border: 0; padding: 6px 0; font-size: .9em; color: #626262; }
 .spread-key { gap: 14px; color: #646464; font-size: 12px; }
 .spread-key span { gap: 5px; }
 .band-key { width: 16px; height: 8px; background: #dce1e4; }

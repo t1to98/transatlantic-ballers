@@ -7,11 +7,14 @@ const latest = periods.at(-1);
   <button type="button" class="week-step" data-step="-1" aria-label="Previous week" disabled={periods.length < 2}>
     <span aria-hidden="true">‹</span>
   </button>
-  <select id={id} aria-label={label} autocomplete="off">
-    <option value="0">Season to date</option>
-    {[...periods].reverse().map(week => <option value={week} selected={week === latest}>Week {week} · {week === latest ? 'In progress' : 'Final'}</option>)}
-  </select>
-  <button type="button" class="week-step" data-step="1" aria-label="Next week" disabled>
+  <span class="period-field">
+    <span class="period-label" aria-hidden="true">Week {latest} · In progress</span>
+    <select id={id} aria-label={label} autocomplete="off">
+      <option value="0">Season to date</option>
+      {[...periods].reverse().map(week => <option value={week} selected={week === latest}>Week {week} · {week === latest ? 'In progress' : 'Final'}</option>)}
+    </select>
+  </span>
+  <button type="button" class="week-step" data-step="1" aria-label="Go to season to date">
     <span aria-hidden="true">›</span>
   </button>
 </div>

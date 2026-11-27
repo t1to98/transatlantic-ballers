@@ -31,10 +31,12 @@ const data=[season.rows,...weeks.map(w=>standings([w]))];
 <section id="spread" aria-labelledby="spread-heading">
   <h2 id="spread-heading">Category spread</h2>
   <div class="spread-controls">
-    <PeriodPicker id="spread-period" periods={periods} label="Category spread period" />
+    <div class="spread-period-controls">
+      <PeriodPicker id="spread-period" periods={periods} label="Category spread period" />
+      <button type="button" id="spread-season">Season to date</button>
+    </div>
     <div class="spread-key"><span><i class="band-key"></i>Middle 50%</span><span><i class="median-key"></i>Median</span></div>
   </div>
-  <p>Each dot is a team. Counting stats are per player-game. Hover or tap a dot to trace a team across categories.</p>
   <p id="spread-note" hidden>{season.note}</p>
   <div class="spread-head" aria-hidden="true"><span>Category</span><span>Low to high</span><span>Median</span></div>
   <div id="distributions">
