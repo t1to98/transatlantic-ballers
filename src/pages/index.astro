@@ -1,7 +1,10 @@
 ---
 import "@fontsource-variable/inter/wght.css";
+import { getImage } from 'astro:assets';
+import leagueCrest from '../assets/league-crest.png';
 import {categories,normalize} from '../lib/fantrax';
 import {standings} from '../lib/rankings';
+const crest = await getImage({ src: leagueCrest, width: 256, format: 'webp', quality: 90 });
 const raw=import.meta.glob('../../data/2026-27/raw/week-*.json',{eager:true,query:'?raw',import:'default'});
 const weeks=Object.entries(raw).map(([path,s])=>normalize(s as string,Number(path.match(/week-(\d+)/)![1]))).sort((a,b)=>a.period-b.period);
 const latest=weeks.at(-1)!.period;
@@ -9,9 +12,17 @@ const data=[standings(weeks),...weeks.map(w=>standings([w]))];
 ---
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width"/><title>Transatlantic Ballers · League rankings</title><link rel="stylesheet" href="/league.css"/></head>
 <body id="top">
-<nav aria-label="Rankings"><div class="nav-inner"><a class="league-mark" href="#top" aria-label="Transatlantic Ballers, back to top">TB</a><a href="#power" aria-current="location">Power</a><a href="#motion">Weekly</a></div></nav>
+<nav aria-label="Rankings"><div class="nav-inner">
+  <a class="league-mark" href="#top" aria-label="Transatlantic Ballers, back to top">
+    <img class="league-crest" src={crest.src} width="36" height="36" alt="" />
+  </a>
+  <a href="#power" aria-current="location">Power</a><a href="#motion">Weekly</a>
+</div></nav>
 <main>
-<h1>Transatlantic Ballers</h1>
+<h1 class="league-title">
+  <img class="league-crest" src={crest.src} width="76" height="76" alt="" />
+  <span>Transatlantic Ballers</span>
+</h1>
 <section id="power"><h2>Power rankings</h2><div class="controls"><select id="period" aria-label="Scoring period"><option value="0">Season to date</option>{[...weeks].reverse().map(w=><option value={w.period} selected={w.period===latest}>Week {w.period} · {w.period===latest?'In progress':'Final'}</option>)}</select><div><button id="rank" aria-pressed="true">Ranks</button><button id="production" aria-pressed="false">Per game</button></div></div>
 <p id="note" hidden>Season shooting totals are awaiting verification. Overall ranks and roto scores are available for individual weeks.</p>
 <div class="scroll"><table><thead><tr><th><button data-sort="-1">Rank</button></th><th>Team</th><th>Roto</th><th>GP</th>{categories.map((c,i)=><th><button data-sort={i}>{c}</button></th>)}</tr></thead><tbody></tbody></table></div>

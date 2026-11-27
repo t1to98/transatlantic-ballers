@@ -98,8 +98,23 @@ th[aria-sort="descending"] button::after {
 }
 .nav-inner .league-mark {
   margin-right: auto;
-  color: white;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -.09em;
+  min-width: 44px;
+}
+.league-crest {
+  display: block;
+  flex: none;
+  /* The silver rim sits slightly below center in the supplied artwork. */
+  clip-path: ellipse(48.6% 47.95% at 49.85% 50.85%);
+}
+.league-title {
+  display: flex;
+  align-items: center;
+  gap: .24em;
+}
+.league-title .league-crest {
+  width: 1.15em;
+  height: 1.15em;
+}
+@media (max-width: 560px) {
+  .league-title { font-size: clamp(30px, 8vw, 36px); }
 }
